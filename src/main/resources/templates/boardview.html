@@ -34,6 +34,23 @@
     <button type="button" hidden="true" class="btn btn-secondary" onclick="boardrealupdate()" id="boardrealupdate"> 수정하기 </button>
     <button type="button" class="btn btn-secondary" onclick="boarddelete()"> 글 삭제 </button>
     <a href="/"><button type="button" class="btn btn-secondary"> 목록보기 </button></a>
+    <h3> 댓글 </h3>
+    <div class="row">
+    <div class="col-md-6">
+        <textarea id="rcontent" class="form-control" rows=3 placeholder="댓글을 작성해 주세요" style="resize:none;"></textarea>
+    </div>
+    <div class="col-md-2">
+        작성자 : <input type="text" id="rwriter">
+    </div>
+    <div class="col-md-2">
+       비번 :  <input type="password" id="rpw">
+    </div>
+    <div class="col-md-2">
+        <button class="form-control py-4 my-1" onclick="replywrite()">등록</button>
+    </div>
+    </div>
+    <table class="table" id="replyarea">
+    </table>
 </div>
 
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>

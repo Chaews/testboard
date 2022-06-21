@@ -2,10 +2,9 @@ package testboard.domain;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,8 +12,9 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Table(name="board")
 @Entity
-public class BoardEntity {
+public class BoardEntity extends BaseTime{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +23,9 @@ public class BoardEntity {
     private String content;
     private String pw;
     private String writer;
+    @ManyToOne
+    @JoinColumn(name = "cno")
+    private CategoryEntity categoryEntity;
+    @OneToMany(mappedBy="boardEntity",cascade=CascadeType.ALL)
+    private List<ReplyEntity> replyEntityList = new ArrayList<>();
 }

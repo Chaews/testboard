@@ -14,20 +14,177 @@ function Request(valuename){
 	return rtnval;
 }
 
-$.ajax({
-    url : "/getboard",
-    method : "GET",
-    data : {"no":no},
-    success : function(result){
-        no = result.no;
-        $("#no").val(result.no);
-        $("#title").val(result.title);
-        $("#writer").val(result.writer);
-        $("#content").val(result.content);
-        $("#pw").val(result.pw);
-    }
-})
+    $.ajax({
+        url : "/getboard",
+        method : "GET",
+        data : {"no":no},
+        success : function(result){
+            no = result.no;
+            $("#no").val(result.no);
+            $("#title").val(result.title);
+            $("#writer").val(result.writer);
+            $("#content").val(result.content);
+            $("#pw").val(result.pw);
+            $.ajax({
+                url : "/getreply",
+                method : "GET",
+                data : {"no" : no},
+                success : function(result){
+                        console.log(result);
+                    let html='';
+                    for(let i = 0 ; i < result["reply"].length ; i++){
+                        html += '<tr><td> 댓글번호 : '+result["reply"][i].rno+'</td><td>댓글 작성자 : '+result["reply"][i].rwriter+'</td><td>댓글 내용 : '+result["reply"][i].rcontent+'</td><td><button type="button" onclick="repupdate('+no+','+result["reply"][i].rno+',\''+result["reply"][i].rpw+'\')">수정</button><button type="button" onclick="repdelete('+no+','+result["reply"][i].rno+',\''+result["reply"][i].rpw+'\')">삭제</button><button type="button" onclick="rereply('+no+','+result["reply"][i].rno+')">댓글</button></td></tr>'+
+                                '<tr id="reupdatearea'+result["reply"][i].rno+'" hidden="true" ><td colspan="3"><input type="text" id="recontent'+result["reply"][i].rno+'" placeholder="'+result["reply"][i].rcontent+'"></td><td><button type="button" onclick="repupdateok('+result["reply"][i].rno+')">수정</button></td></tr>'+
+                                '<tr id="rerearea'+result["reply"][i].rno+'" hidden="true" ><td><input type="text" placeholder="작성자" id="rerewriter'+result["reply"][i].rno+'"></td><td><input type="text" placeholder="비밀번호" id="rerepw'+result["reply"][i].rno+'"></td><td><input type="text" placeholder="내용" id="rerecontent'+result["reply"][i].rno+'"></td><td><button type="button" onclick="reprepok('+no+','+result["reply"][i].rno+')">작성</button></td></tr>';
 
+                        for(let j = 0 ; j< result["rereply"].length ; j++){
+                            if(result["reply"][i].rno==result["rereply"][j].rindex){
+                                html+='<tr><td></td><td>대댓글 작성자 : '+result["rereply"][j].rwriter+'</td><td>대댓글 내용 : '+result["rereply"][j].rcontent+'</td><td><button type="button" onclick="reprepupdate('+no+','+result["rereply"][j].rno+',\''+result["rereply"][j].rpw+'\')">수정</button><button type="button" onclick="reprepdelete('+no+','+result["rereply"][j].rno+',\''+result["rereply"][j].rpw+'\')">삭제</button></td></tr>'+
+                                '<tr id="rereupdatearea'+result["rereply"][j].rno+'" hidden="true" ><td></td><td colspan="2"><input type="text" id="rerecontent'+result["rereply"][j].rno+'" placeholder="'+result["rereply"][j].rcontent+'"></td><td><button type="button" onclick="reprepupdateok('+result["rereply"][j].rno+')">수정</button></td></tr>';
+                            }
+                        }
+
+                    }
+                    $("#replyarea").html(html);
+
+                }
+            })
+
+        }
+    })
+
+function repupdate(no,rno,rpw){
+    if(prompt("비밀번호를 입력해주세요","")==rpw){
+        alert("수정할내용을 입력하세요");
+        $("#reupdatearea"+rno).attr('hidden',false);
+
+    }else{
+        alert("비번틀림");
+    }
+}
+
+function reprepupdate(no,rno,rpw){
+    if(prompt("비밀번호를 입력해주세요","")==rpw){
+        alert("수정할내용을 입력하세요");
+        $("#rereupdatearea"+rno).attr('hidden',false);
+
+    }else{
+        alert("비번틀림");
+    }
+}
+
+function rereply(no,rno){
+    $("#rerearea"+rno).attr('hidden',false);
+}
+
+function reprepok(no,rno){
+    let rerewriter = $("#rerewriter"+rno).val();
+    let rerepw = $("#rerepw"+rno).val();
+    let rerecontent = $("#rerecontent"+rno).val();
+    $.ajax({
+        url: "/reresave",
+        data : {"no": no, "rno" : rno, "rerewriter" : rerewriter ,"rerepw" : rerepw,"rerecontent" : rerecontent},
+        method : "GET",
+        success : function(result){
+            if(result){
+                alert("작성되었습니다");
+                location.reload();
+            }
+            else{
+                alert("삭제 실패");
+            }
+        }
+    })
+}
+function reprepupdateok(rno){
+    let reupdatecontent = $("#rerecontent"+rno).val();
+    $.ajax({
+        url: "/repupdateok",
+        data : {"rno" : rno, "reupdatecontent" : reupdatecontent },
+        method : "POST",
+        success : function(result){
+            if(result){
+                alert("수정되었습니다");
+                location.reload();
+            }
+            else{
+                alert("삭제 실패");
+            }
+        }
+    })
+}
+function repupdateok(rno){
+    let reupdatecontent = $("#recontent"+rno).val();
+    $.ajax({
+        url: "/repupdateok",
+        data : {"rno" : rno, "reupdatecontent" : reupdatecontent },
+        method : "POST",
+        success : function(result){
+            if(result){
+                alert("수정되었습니다");
+                location.reload();
+            }
+            else{
+                alert("삭제 실패");
+            }
+        }
+    })
+}
+
+
+function repdelete(no,rno,rpw){
+    if(prompt("비밀번호를 입력해주세요","")==rpw){
+        $.ajax({
+            url: "/repdelete",
+            data : {"rno" : rno },
+            method : "POST",
+            success : function(result){
+                if(result){
+                    alert("삭제되었습니다");
+                    location.reload();
+                }
+                else{
+                    alert("삭제 실패");
+                }
+            }
+        })
+    }else{
+        alert("비번틀림");
+    }
+}
+function reprepdelete(no,rno,rpw){
+    if(prompt("비밀번호를 입력해주세요","")==rpw){
+        $.ajax({
+            url: "/repdelete",
+            data : {"rno" : rno },
+            method : "POST",
+            success : function(result){
+                if(result){
+                    alert("삭제되었습니다");
+                    location.reload();
+                }
+                else{
+                    alert("삭제 실패");
+                }
+            }
+        })
+    }else{
+        alert("비번틀림");
+    }
+}
+
+
+function boardupdate(){
+    if(prompt("비밀번호를 입력해주세요","")==$("#pw").val()){
+        alert("제목과 내용을 수정하세요");
+        $("#title").attr("readonly",false);
+        $("#content").attr("readonly",false);
+        $("#boardupdate").attr("hidden",true);
+        $("#boardrealupdate").attr("hidden",false);
+    }else{
+        alert("비번틀림");
+    }
+}
 function boardwrite(){
     let title = $("#title").val();
     let writer = $("#writer").val();
@@ -92,4 +249,19 @@ function boardrealupdate(no){
             else{alert("삭제 실패")};
         }
     })
+}
+function replywrite(){
+    $.ajax({
+        url : "/replysave",
+        method :"GET",
+        data : {"no": no , "rcontent" : $("#rcontent").val() ,"rwriter" : $("#rwriter").val(),"rpw" : $("#rpw").val() },
+        success:function(result){
+            if(result){
+                alert("작성되었습니다");
+                location.href="/boardview?no="+$("#no").val() ;
+            }
+            else{alert("작성 실패")};
+        }
+    })
+
 }

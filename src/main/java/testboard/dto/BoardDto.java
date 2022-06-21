@@ -9,5 +9,6 @@ public class BoardDto {
     private String content;
     private String pw;
     private String writer;
+    private String category;
 
 }
