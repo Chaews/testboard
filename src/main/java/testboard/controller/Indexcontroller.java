@@ -36,11 +36,11 @@ public class Indexcontroller {
 
     @GetMapping("/getlist")
     @ResponseBody
-    public void getlist(@RequestParam("cno")int cno, HttpServletResponse response){
+    public void getlist(@RequestParam("cno")int cno, @RequestParam("key")String key,@RequestParam("keyword")String keyword,@RequestParam("page")int page, HttpServletResponse response){
         try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
-            response.getWriter().print(boardService.getlist(cno));
+            response.getWriter().print(boardService.getlist(cno,page,key,keyword));
         }
         catch(Exception e){e.printStackTrace();}
 

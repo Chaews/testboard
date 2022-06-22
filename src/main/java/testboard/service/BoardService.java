@@ -3,6 +3,10 @@ package testboard.service;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import testboard.domain.*;
 import testboard.dto.BoardDto;
@@ -45,11 +49,44 @@ public class BoardService {
         return true;
     }
 
-    public JSONArray getlist(int cno){
+    public JSONObject getlist(int cno,int page, String key, String keyword){
+        JSONObject object = new JSONObject();
         JSONArray jsonArray = new JSONArray();
-        List<BoardEntity> boardlist =  boardRepository.findAll();
+        Page<BoardEntity> boardlist = null ;
+        Pageable pageable = PageRequest.of(page-1,3 , Sort.by(Sort.Direction.DESC, "no"));
+        System.out.println(cno);
+        System.out.println(page);
+        System.out.println(key);
+        System.out.println(keyword);
+        if(cno==0){
+            if (key.equals("btitle")) {
+                System.out.println("제목 검색");
+                boardlist = boardRepository.findBytitlenocno(keyword, pageable);
+            } else if (key.equals("bcontent")) {
+                System.out.println("내용 검색");
+                boardlist = boardRepository.findBycontentnocno(keyword, pageable);
+            } else {
+                boardlist = boardRepository.findBytitlenocno(keyword, pageable);
+            }
+        }
+        else {
+            if (key.equals("btitle")) {
+                System.out.println("제목 검색");
+                boardlist = boardRepository.findBytitle(cno, keyword, pageable);
+            } else if (key.equals("bcontent")) {
+                System.out.println("내용 검색");
+                boardlist = boardRepository.findBycontent(cno, keyword, pageable);
+            } else {
+                boardlist = boardRepository.findBytitle(cno, keyword, pageable);
+            }
+        }
+        int btncount = 5;
+        int startbtn = ((page-1)/btncount)*btncount+1;
+        int endbtn =startbtn + btncount -1;
+        if(endbtn > boardlist.getTotalPages()){
+            endbtn = boardlist.getTotalPages();
+        }
         for(BoardEntity entity : boardlist){
-            if(cno==0) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("no", entity.getNo());
                 jsonObject.put("title", entity.getTitle());
@@ -57,20 +94,12 @@ public class BoardService {
                 jsonObject.put("writer", entity.getWriter());
                 jsonObject.put("pw", entity.getPw());
                 jsonArray.put(jsonObject);
-            }
-            else{
-                if(entity.getCategoryEntity().getCno()==cno){
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("no", entity.getNo());
-                    jsonObject.put("title", entity.getTitle());
-                    jsonObject.put("content", entity.getContent());
-                    jsonObject.put("writer", entity.getWriter());
-                    jsonObject.put("pw", entity.getPw());
-                    jsonArray.put(jsonObject);
-                }
-            }
         }
-        return jsonArray;
+        object.put("totalpage", boardlist.getTotalPages());
+        object.put("startbtn",startbtn);
+        object.put("endbtn",endbtn);
+        object.put("data",jsonArray);
+        return object;
     }
     public JSONObject getboard(int no){
         BoardEntity board =  boardRepository.findById(no).get();
