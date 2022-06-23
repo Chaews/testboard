@@ -9,25 +9,34 @@
 <body>
 <div class="container my-5">
     <div id="categorybox"></div>
-<table class="table" id="boardtable"></table>
+<table class="table table-hover" id="boardtable"></table>
     <a href="/write"><button type="button" class="btn btn-secondary"> 글 쓰기 </button></a>
 
 <ul id="pagebtnbox" class="pagination justify-content-center">
 
 </ul>
 
+<div class="row text-center g-1">
 
-<div class="justify-content-center">
-    <select id="key">
+<div class="col-md-1 offset-md-4">
+    <select class="form-select" id="key">
         <option value="btitle"> 제목 </option>
         <option value="bcontent"> 내용 </option>
     </select>
-    <input type="text" id="keyword">
-    <button type="button" onclick="search()">검색</button>
+</div>
+
+<div class="col-md-2">
+    <input class="form-control" type="text" id="keyword">
+</div>
+
+<div class="col-md-1">
+    <button type="button" class="btn btn-secondary" onclick="search()">검색</button>
+</div>
+
 </div>
 </div>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/board.js"></script>
+<script src="/js/boardlist.js"></script>
 </body>
 </html>

@@ -29,7 +29,7 @@ function boardlist(cno, page, key, keyword){
     current_key = key; // 현재 검색된 키 [ 없을경우 공백 ]
     current_keyword = keyword; // 현재 검색된 키워드 [ 없을경우 공백 ]
     $.ajax({
-        url : "/getlist",
+        url : "/board/getlist",
         data : {"cno" : current_cno , "key" :  current_key  , "keyword" : current_keyword , "page" : current_page } ,
         method : "GET",
         success : function(result){
@@ -64,36 +64,16 @@ function boardlist(cno, page, key, keyword){
     })
 }
 
-function boardwrite(){
-    let title = $("#title").val();
-    let writer = $("#writer").val();
-    let pw = $("#pw").val();
-    let content = $("#content").val();
-    let category =$("#category").val();
-    $.ajax({
-        url : "/boardwrite",
-        method : "POST",
-        data : {"title":title,"writer":writer,"pw":pw,"content":content, "category" : category},
-        success : function(result){
-            if(result){
-                alert("작성되었습니다");
-                location.href="/"
-            }
-            else{alert("작성실패")};
-        }
-    })
-}
-
 function getcategorylist(){
     $.ajax({
-        url : "/getcategorylist",
+        url : "/board/getcategorylist",
         method : "GET",
         success : function(result){
             html = '';
             for(let i = 0 ; i < result.length ; i++ ){
-                html+= '<button onclick="boardlist('+result[i].cno+','+1+',\''+current_key+'\',\''+current_keyword+'\')" type="button">'+result[i].cname+'</button> ';
+                html+= '<button class="btn btn-secondary" onclick="boardlist('+result[i].cno+','+1+',\''+current_key+'\',\''+current_keyword+'\')" type="button">'+result[i].cname+'</button> ';
             }
-            html += '<button onclick="boardlist('+0+','+1+',\''+current_key+'\',\''+current_keyword+'\')" type="button">전체보기</button>';
+            html += '<button class="btn btn-secondary" onclick="boardlist('+0+','+1+',\''+current_key+'\',\''+current_keyword+'\')" type="button">전체보기</button>';
             $("#categorybox").html(html);
         }
     })

@@ -25,6 +25,7 @@ public class BoardService {
     @Autowired
     ReplyRepository replyRepository;
 
+    @Transactional
     public boolean boardwrite(BoardDto boardDto){
 
         boolean ctswitch = false ;
